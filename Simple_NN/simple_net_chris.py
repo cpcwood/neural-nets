@@ -24,8 +24,6 @@ seed(1)
 # ======================================================
 # Create hidden layer transfer function
 def layer_transfer(layer, inputs):
-  print(layer[0])
-  print(inputs)
   dot_product = np.dot(layer[0], inputs)
   z_all = dot_product + layer[1]
   return z_all
@@ -81,7 +79,7 @@ def softmax(z_all):
 # Create feed forward results
 def feed_forward(trained_network, inputs):
   in_values = inputs
-  for layer in trained_network[:len(network)-1]:
+  for layer in trained_network[:len(trained_network)-1]:
     z = layer_transfer(layer, in_values)
     a = layer_activation(z)
     in_values = a
@@ -112,11 +110,10 @@ def forward_propagate(network, inputs):
   return [z_all, a_all] 
 
 # # Test forward propagation
-# net = create_network(3, 2, 4, 2)
+# net = create_network(2, 2, 3, 2)
 # print('net')
 # print(net)
-# print('outputs')
-# inputs = np.array([0.4, 2., -0.1])
+# inputs = np.array([0.4, 2.])
 # a = forward_propagate(net, inputs)
 
 # print('outputs')
@@ -124,6 +121,83 @@ def forward_propagate(network, inputs):
 # print(a[0])
 # print('a_all')
 # print(a[1])
+
+# =======================================================
+# dC/da for each node in the output array
+def dC_da(a_output, y_expected):
+  return 2*(y_expected - a_output)
+
+# # Test dC/da
+# a = np.array([0.4, 0.2, 0.2])
+# y = np.array([1., 0., 0.,])
+# print(dC_da(a,y))
+
+# =======================================================
+# Create da/dz
+def softmax_da_dz(a_output):
+  return a_output - (a_output**2)
+
+# # Test softmax_da_dz
+# a = np.array([0.4, 0.2, 0.2])
+# print(softmax_da_dz(a))
+
+# =======================================================
+# Create backprop output
+def backpropagation_output_layer(a_all, expected_output):
+  dcost_dactivation = dC_da(a_all[-1], expected_output)
+  dactivation_dz = softmax_da_dz(a_all[-1])
+  # weights matrix
+  dC_dw = []
+  for i in range(len(a_all[-1])):
+    output_node = []
+    for input_value in a_all[-2]:
+      weight_derivative = input_value * dactivation_dz[i] * dcost_dactivation[i]
+      output_node.append(weight_derivative)
+    dC_dw.append(output_node)
+  dC_dw = np.array(dC_dw)
+  # bias matrix
+  dC_db = dcost_dactivation * dactivation_dz
+  return [dC_dw, dC_db]
+
+
+# # Test backpropagation_output_layer
+# net = create_network(2, 2, 4, 3)
+# print('net')
+# print(net)
+# inputs = np.array([0.4, 2.])
+# expected_output = np.array([1., 0., 0.])
+# a = forward_propagate(net, inputs)
+
+# print('outputs')
+# print('z_all')
+# print(a[0])
+# print('a_all')
+# print(a[1])
+# print('output weight matrix')
+# output = backpropagation_output_layer(a[1], expected_output)
+# print(output[0])
+# print('output bias matrix')
+# print(output[1])
+
+# =======================================================
+# Create da/dz for relu
+def reLU_da_dz(a_nodes):
+  a_nodes[a_nodes > 0] = 1
+  a_nodes[a_nodes < 0] = 0
+  return a_nodes
+
+# Test reLU_da_dz
+a_nodes = np.array([-3.34352538,  2.06987895,  3.19224339,  4.30583721])
+print(reLU_da_dz(a_nodes))
+
+
+# =======================================================
+# Create backprop hidden layers
+def backpropagation_hidden_layers(a_all, output_dC_dz_derivatives):
+  return
+
+
+#dC_dz_derivatives is dC_da * da_dz for each node... equal to dC_db
 
 # =======================================================
 # Create mean squared error
@@ -155,25 +229,23 @@ def cost(results, expected):
 # print('result')
 # print(cost(results, expected))
 
-# =======================================================
-# Create derivate vector of cost function with respect to softmax
-# dC/da for each node in the output array
-def dC_da(a_output, expected)
-  dCda = 
-  return
 
-# Test dC/da
 
 # =======================================================
 # Create derviate vector of softmax function with respect to change in z
 # da/dz for each node in output array
-
-
+def softmax_derivative(a_output):
+  s = a_output.reshape(-1,1)
+  s_aj = np.diagflat(s)
+  s_mat = np.dot(s, s.T)
+  derivate_matrix = s_aj - s_mat
+  per_node_derivative = np.prod(derivate_matrix, axis=0)
+  return per_node_derivative
 
 
 # =======================================================
 # Create da/dz
-def da_dz(a_all, z_all)
+def da_dz(a_all, z_all):
 
   return
 
@@ -183,12 +255,10 @@ def da_dz(a_all, z_all)
 
 # =======================================================
 # Create dz/dw
-def dz_dw(z_all, layer)
+def dz_dw(z_all, layer):
 
   return
 
-
-# Test da/dz
 
 
 
