@@ -252,61 +252,125 @@ def backpropagation(net, a_all, expected_output):
 
 # backpropagation returns cost matrix same dimensions as the net matrix
 
-
-
-
-# =======================================================
-# Calcualte dC_dz from relu da_dz and previous layer dC_da
-# a = np.array([2,3,1])
-# a = a.reshape(-1,1)
-# b = np.array([1,4,0])
-# print(a)
-# print(b)
-# print(a * b)
-# print(sum(a * b))
-
-
-#dC_dz_derivatives is dC_da * da_dz for each node... equal to dC_db
-
 # =======================================================
 # Create mean squared error
-def mean_square_error(results, expected):
-  error = (expected - results) ** 2
-  return error
+def mse(outputs, expected_outputs):
+  mean_squared_error = (((outputs - expected_outputs)**2).sum(axis=0)) / len(outputs)
+  return mean_squared_error * 100
 
-# # Test mean squared error
-# results = np.array([0.25, 0.5, 0.15, 0.1])
-# print('results')
-# print(results)
-# expected = np.array([0,1,0,0])
-# print('expected')
-# print(expected)
-# print('equation')
-# print(mean_square_error(results, expected))
+# # test mean squared error
+# outputs = np.array([0.7, 0.2, 0.1])
+# expected_outputs = np.array([1., 0., 0.])
 
-# =======================================================
-# Create cost total
-def cost(results, expected):
-  cost = np.sum(mean_square_error(results, expected))
-  return cost
+# # 0.3, 0.2, 0.1 => 0.09, 0.04, 0.01 => 0.14 => 0.0466 => 4.66
 
-# # Test cost function
-# results = np.array([0.25, 0.5, 0.15, 0.1])
-# expected = np.array([0,1,0,0])
-# print('Expected result')
-# print(0.345)
-# print('result')
-# print(cost(results, expected))
-
+# print(mse(outputs, expected_outputs))
+    
 
 
 # =======================================================
-# Create derviate vector of softmax function with respect to change in z
-# da/dz for each node in output array
-def softmax_derivative(a_output):
-  s = a_output.reshape(-1,1)
-  s_aj = np.diagflat(s)
-  s_mat = np.dot(s, s.T)
-  derivate_matrix = s_aj - s_mat
-  per_node_derivative = np.prod(derivate_matrix, axis=0)
-  return per_node_derivative
+# Create dataset to train net on
+# Creates x points per class
+
+import matplotlib.pyplot as plt
+
+def create_data2(points, classes):
+  X = np.zeros((points*classes,2))
+  Y = np.zeros(points*classes, dtype = 'uint8')
+  for class_number in range(classes):
+    ix = range(points*class_number, points*(class_number+1))
+    t = np.linspace(class_number*4, (class_number+1)*4, points) + np.random.randn(points)*0.05
+    r = np.linspace(0.0, 1, points)  # radius
+    X[ix] = np.c_[r*np.sin(t*2.5), r*np.cos(t*2.5)]
+    Y[ix] = class_number
+  return X, Y
+
+def plot_train(X,y):
+  plt.scatter(X[:,0],X[:,1], c = y)
+  plt.show()
+
+# convert c into hot-array
+def class_to_hot(c):
+  c_hot = np.zeros((c.size, c.max()+1))
+  c_hot[np.arange(c.size),c] = 1
+  return c_hot
+
+# shuffle arrays for batch data
+def unison_shuffle_array(a, b):
+  p = np.random.permutation(len(a))
+  return a[p], b[p]
+
+# plot_train(xy, c)
+# =======================================================
+# Create batch train
+
+def batch_train(net, xy, c_hot, batch_size, learning_rate):
+  assert len(c) % batch_size == 0
+  loc = 0
+  
+  outputs = feed_forward(net, xy[loc])
+  print(outputs)
+  print(c_hot[loc])
+  print(mse(outputs, c_hot[loc]))
+  print(loc)
+    
+  print(len(c))
+  for i in range(len(c)/batch_size):
+    backprop_matrix = []
+
+    for n in range(batch_size):
+      a_all = forward_propagate(net, xy[i])
+      if n == 0:
+        backprop_matrix = backpropagation(net, a_all, c_hot[i])
+      else:
+        next_backprop_matrix = backpropagation(net, a_all, c_hot[i])
+        for j in range(len(backprop_matrix)):
+          for n in range(len(backprop_matrix[j])):
+            backprop_matrix[j][n] += next_backprop_matrix[j][n]
+      loc += 1
+
+    # normalise cost matrix
+    for j in range(len(backprop_matrix)):
+      for n in range(len(backprop_matrix[j])):
+        backprop_matrix[j][n] / batch_size
+
+    # step network weight and biases in direction of cost function
+    for j in range(len(net)):
+      for n in range(len(net[j])):
+        net[j][n] = net[j][n] * backprop_matrix[j][n] * learning_rate
+    
+    # check and print current error
+    outputs = feed_forward(net, xy[loc-1])
+    print(outputs)
+    print(c_hot[loc-1])
+    print(mse(outputs, c_hot[loc-1]))
+    print(loc)
+    
+  return net
+
+# train net with dataset
+net = create_network(2, 5, 5, 3)
+
+xy, c = create_data2(1000, 3)
+print(len(xy))
+c_hot = class_to_hot(c)
+xy_shuffle, c_hot_shuffle = unison_shuffle_array(xy, c_hot)
+
+batch_size = 100
+
+batch_train(net, xy_shuffle, c_hot_shuffle, batch_size, 0.01)
+
+
+
+
+
+# a = np.array([1,2,3,4])
+# b = np.array([1,2,3])
+# e = np.array([1,2,3,4])
+# f = np.array([1,2,3])
+# c = [[a, b],[e, f]]
+# for item in c:
+#   for i in range(len(item)):
+#     item[i] += 1
+
+# print(c)
