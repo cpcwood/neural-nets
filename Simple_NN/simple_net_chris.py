@@ -94,20 +94,17 @@ def feed_forward(trained_network, inputs):
 # =======================================================
 # Create forward propagation
 def forward_propagate(network, inputs):
-  in_values = inputs
-  z_all = []
-  a_all = []
+  a_in = inputs
+  a_all = [a_in]
   for layer in network[:len(network)-1]:
-    z = layer_transfer(layer, in_values)
-    z_all.append(z)
+    z = layer_transfer(layer, a_in)
     a = layer_activation(z)
     a_all.append(a)
-    in_values = a
-  z = layer_transfer(network[len(network)-1], in_values)
-  z_all.append(z)
+    a_in = a
+  z = layer_transfer(network[len(network)-1], a_in)
   results = softmax(z)
   a_all.append(results)
-  return [z_all, a_all] 
+  return a_all 
 
 # # Test forward propagation
 # net = create_network(2, 2, 3, 2)
@@ -117,10 +114,9 @@ def forward_propagate(network, inputs):
 # a = forward_propagate(net, inputs)
 
 # print('outputs')
-# print('z_all')
-# print(a[0])
 # print('a_all')
-# print(a[1])
+# print(a)
+
 
 # =======================================================
 # dC/da for each node in the output array
@@ -143,22 +139,19 @@ def softmax_da_dz(a_output):
 
 # =======================================================
 # Create backprop output
-def backpropagation_output_layer(a_all, expected_output):
+def backpropagation_output_layer(a_all, expected_output, layer_weights):
   dcost_dactivation = dC_da(a_all[-1], expected_output)
   dactivation_dz = softmax_da_dz(a_all[-1])
-  # weights matrix
-  dC_dw = []
-  for i in range(len(a_all[-1])):
-    output_node = []
-    for input_value in a_all[-2]:
-      weight_derivative = input_value * dactivation_dz[i] * dcost_dactivation[i]
-      output_node.append(weight_derivative)
-    dC_dw.append(output_node)
-  dC_dw = np.array(dC_dw)
-  # bias matrix
-  dC_db = dcost_dactivation * dactivation_dz
-  return [dC_dw, dC_db]
+  dC_dz = dcost_dactivation * dactivation_dz
+  # weights dervivative matrix is dcost_dz for each node * a^L-1 for each weight in node
+  dC_dz_re = dC_dz.reshape(-1,1)
+  dC_dw = dC_dz_re * a_all[-2]
+  # a^L-1 derivatives is sum of (dC_dz_re for node * weight for input)
+  dC_da_L_minus_1 = (dC_dz_re * layer_weights).sum(axis=0)
+  # dC_dz is the same a derivative matrix for biases
+  return [dC_dw, dC_dz, dC_da_L_minus_1]
 
+  
 
 # # Test backpropagation_output_layer
 # net = create_network(2, 2, 4, 3)
@@ -166,18 +159,38 @@ def backpropagation_output_layer(a_all, expected_output):
 # print(net)
 # inputs = np.array([0.4, 2.])
 # expected_output = np.array([1., 0., 0.])
-# a = forward_propagate(net, inputs)
+# a_all = forward_propagate(net, inputs)
 
 # print('outputs')
-# print('z_all')
-# print(a[0])
 # print('a_all')
-# print(a[1])
-# print('output weight matrix')
-# output = backpropagation_output_layer(a[1], expected_output)
+# print(a_all)
+
+# print('output weight matrix new')
+# output = backpropagation_output_layer(a_all, expected_output, net[-1][0])
 # print(output[0])
 # print('output bias matrix')
 # print(output[1])
+# print('dC_da_L_minus_1')
+# print(output[2])
+
+
+
+# # Test generating a^l-1 derivatives
+# print('test test')
+# dcdz = np.array([1,2,3])
+# dcdz_re = dcdz.reshape(-1,1)
+# w = np.array([[4,2], [1,2], [2,3]])
+# print('3x nodes in output layer dc_dz')
+# print(dcdz)
+# print('each node having 2 weights')
+# print(w)
+# expected = np.array([[4,2], [2,4], [6,9]])
+# print('expected')
+# print(expected)
+# print('output')
+# print(dcdz_re * w)
+# print((dcdz_re * w).sum(axis=0))
+
 
 # =======================================================
 # Create da/dz for relu
@@ -186,15 +199,71 @@ def reLU_da_dz(a_nodes):
   a_nodes[a_nodes < 0] = 0
   return a_nodes
 
-# Test reLU_da_dz
-a_nodes = np.array([-3.34352538,  2.06987895,  3.19224339,  4.30583721])
-print(reLU_da_dz(a_nodes))
+# # Test reLU_da_dz
+# a_nodes = np.array([-3.34352538,  2.06987895,  3.19224339,  4.30583721])
+# print(reLU_da_dz(a_nodes))
 
 
 # =======================================================
-# Create backprop hidden layers
-def backpropagation_hidden_layers(a_all, output_dC_dz_derivatives):
-  return
+# Create backpropagation full
+# desired output [[weights derivatives], [bias derviatives]]
+def backpropagation(net, a_all, expected_output):
+  cost_derivatives = []
+  output_backprop = backpropagation_output_layer(a_all, expected_output, net[-1][0])
+  # append output_backprop derivatives to results matrix
+  cost_derivatives.append([output_backprop[0], output_backprop[1]])
+  dC_da = output_backprop[2]
+  # perform backprop on all hidden layers
+  for i in reversed(range(len(a_all)-1)):
+    if i == 0:
+      break
+    # create dC_dz
+    da_dz = reLU_da_dz(a_all[i])
+    dC_dz = da_dz * dC_da
+    # create weight derviatives
+    dC_dz_re = dC_dz.reshape(-1,1)
+    dC_dw = dC_dz_re * a_all[i-1]
+    cost_derivatives.append([dC_dw, dC_dz])
+    # create and ammend a^L-1 derivatives
+    dC_da = (dC_dz_re * net[i-1][0]).sum(axis=0)
+  #reverse appended lists to match net weights structure
+  cost_derivatives = cost_derivatives[::-1]
+  return cost_derivatives
+
+
+# # Test backpropagation
+# net = create_network(2, 2, 4, 3)
+# print('net')
+# print(net)
+# inputs = np.array([0.4, 2.])
+# expected_output = np.array([1., 0., 0.])
+# a_all = forward_propagate(net, inputs)
+
+# print('outputs')
+# print('a_all')
+# print(a_all)
+
+# # print('output h layers')
+# # output = backpropagation(net, a_all, expected_output)
+
+# output = backpropagation(net, a_all, expected_output)
+# print('output weight matrix new')
+# print(output)
+
+# backpropagation returns cost matrix same dimensions as the net matrix
+
+
+
+
+# =======================================================
+# Calcualte dC_dz from relu da_dz and previous layer dC_da
+# a = np.array([2,3,1])
+# a = a.reshape(-1,1)
+# b = np.array([1,4,0])
+# print(a)
+# print(b)
+# print(a * b)
+# print(sum(a * b))
 
 
 #dC_dz_derivatives is dC_da * da_dz for each node... equal to dC_db
@@ -241,71 +310,3 @@ def softmax_derivative(a_output):
   derivate_matrix = s_aj - s_mat
   per_node_derivative = np.prod(derivate_matrix, axis=0)
   return per_node_derivative
-
-
-# =======================================================
-# Create da/dz
-def da_dz(a_all, z_all):
-
-  return
-
-
-# Test da/dz
-
-
-# =======================================================
-# Create dz/dw
-def dz_dw(z_all, layer):
-
-  return
-
-
-
-
-
-# =======================================================
-# Create batch training data
-# def batch_training(inputs_batch, network):
-#   return 
-
-# # Calculate the derivative of an neuron output
-# def transfer_derivative(output):
-# 	return output * (1.0 - output)
-
-# def back_prop_test(net, expected):
-#   for i in reversed(range(len(net))):
-#     layer = net[i]
-#     print(i)
-#     print(layer)
-#     errors = list()
-# 		if i != len(network)-1:
-#       for j in range(len(layer)):
-#         print(j)
-# 				error = 0.0
-# 				for neuron in network[i + 1]:
-# 					error += (neuron['weights'][j] * neuron['delta'])
-# 				errors.append(error)
-# 		else:
-# 			for j in range(len(layer)):
-# 				neuron = layer[j]
-# 				errors.append(expected[j] - neuron['output'])
-# 		for j in range(len(layer)):
-# 			neuron = layer[j]
-# 			neuron['delta'] = errors[j] * transfer_derivative(neuron['output'])
-
-
-
-
-# # Backpropagate error and store in neurons
-# def backward_propagate_error(network, expected):
-#   for i in reversed(range(len(network))):
-#     layer = network[i]
-#     print(i)
- 
-# # test backpropagation of error
-# network = [[{'output': 0.7105668883115941, 'weights': [0.13436424411240122, 0.8474337369372327, 0.763774618976614]}],
-# 		[{'output': 0.6213859615555266, 'weights': [0.2550690257394217, 0.49543508709194095]}, {'output': 0.6573693455986976, 'weights': [0.4494910647887381, 0.651592972722763]}]]
-# expected = [0, 1]
-# back_prop_test(network, expected)
-# # for layer in network:
-	# print(layer)
