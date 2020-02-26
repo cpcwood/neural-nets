@@ -309,12 +309,9 @@ def batch_train(net, xy, c_hot, batch_size, learning_rate):
   loc = 0
   
   outputs = feed_forward(net, xy[loc])
-  print(outputs)
-  print(c_hot[loc])
-  print(mse(outputs, c_hot[loc]))
   print(loc)
-    
-  print(len(c))
+  print(mse(outputs, c_hot[loc]))
+
   for i in range(len(c)/batch_size):
     backprop_matrix = []
 
@@ -337,30 +334,40 @@ def batch_train(net, xy, c_hot, batch_size, learning_rate):
     # step network weight and biases in direction of cost function
     for j in range(len(net)):
       for n in range(len(net[j])):
-        net[j][n] = net[j][n] * backprop_matrix[j][n] * learning_rate
+        net[j][n] += (backprop_matrix[j][n] * learning_rate)
     
     # check and print current error
     outputs = feed_forward(net, xy[loc-1])
-    print(outputs)
-    print(c_hot[loc-1])
-    print(mse(outputs, c_hot[loc-1]))
     print(loc)
+    print(mse(outputs, c_hot[loc-1]))
     
   return net
 
 # train net with dataset
-net = create_network(2, 5, 5, 3)
+net = create_network(2, 15, 5, 2)
 
-xy, c = create_data2(1000, 3)
+xy, c = create_data2(5000, 2)
 print(len(xy))
 c_hot = class_to_hot(c)
 xy_shuffle, c_hot_shuffle = unison_shuffle_array(xy, c_hot)
 
 batch_size = 100
 
-batch_train(net, xy_shuffle, c_hot_shuffle, batch_size, 0.01)
+batch_train(net, xy_shuffle, c_hot_shuffle, batch_size, 0.1)
 
 
+
+# def step_net(net, cost_matrix, learning_rate):
+#   for j in range(len(net)):
+#       for n in range(len(net[j])):
+#         net[j][n] += (cost_matrix[j][n] * learning_rate)
+#   return net
+
+# net = create_network(2, 2, 2, 3)
+# bnet = create_network(2, 2, 2, 3)
+# print(net)
+# print(bnet)
+# print(step_net(net, bnet, 0.1))
 
 
 
