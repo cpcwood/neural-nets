@@ -1,43 +1,30 @@
 import numpy as np
 from random import seed
 from random import random
+np.random.seed(1)
 
 # Inputs => layer_transfer => layer_activation => layer_transfer(output) => output_function
 
 # ======================================================
 # Create network with randomised weights - each node hash with array of weights
-# ======================================================
-# Create network with randomised weights - each node hash with array of weights
+
+def generate_layer(n_nodes, n_weights):
+  return [(np.random.randn(n_nodes, n_weights)*np.sqrt(2.0/(n_weights+n_nodes))), (np.random.randn(n_nodes)*np.sqrt(2.0/(n_weights+n_nodes)))]
+
 def create_network(n_inputs, n_hidden_layers, n_hidden_nodes, n_outputs): 
   network = []
-  hidden_layer1 = [np.random.random((n_hidden_nodes, n_inputs)), np.random.rand(n_hidden_nodes)]
+  hidden_layer1 = generate_layer(n_hidden_nodes, n_inputs)
   network.append(hidden_layer1)
-  for layer_n in range(n_hidden_layers-1): # Create each layer
-    hidden_layer = [np.random.random((n_hidden_nodes, n_hidden_nodes)), np.random.rand(n_hidden_nodes)]
+  for layer_n in range(n_hidden_layers-1):
+    hidden_layer = generate_layer(n_hidden_nodes, n_hidden_nodes)
     network.append(hidden_layer)
-  output_layer = [np.random.random((n_outputs, n_hidden_nodes)), np.random.rand(n_outputs)]
+  output_layer = generate_layer(n_outputs, n_hidden_nodes)
   network.append(output_layer)
   return network
 
-
-# def generate_layer(n_nodes, n_weights):
-#   return [(np.random.randn(n_nodes, n_weights)*np.sqrt(2.0/(n_weights+n_nodes))), (np.random.randn(n_nodes)*np.sqrt(2.0/(n_weights+n_nodes)))]
-
-# def create_network(n_inputs, n_hidden_layers, n_hidden_nodes, n_outputs): 
-#   network = []
-#   hidden_layer1 = generate_layer(n_hidden_nodes, n_inputs)
-#   network.append(hidden_layer1)
-#   for layer_n in range(n_hidden_layers-1):
-#     hidden_layer = generate_layer(n_hidden_nodes, n_inputs)
-#     network.append(hidden_layer)
-#   output_layer = generate_layer(n_outputs, n_hidden_nodes)
-#   network.append(output_layer)
-#   return network
-
 # Test network generation
 
-np.random.seed(0)
-net = create_network(3, 2, 2, 2)  
+# net = create_network(3, 2, 2, 2)  
 # for layer in net:
 #   print(layer)
   
@@ -395,14 +382,14 @@ def classify_net(net):
   plt.imshow(Z, cmap=plt.cm.RdBu, extent=(0, 1, 0, 1), interpolation='bilinear')
   plt.title('net')
   plt.show()
-  plt.pause(0.001)
+  plt.pause(0.0001)
 
 
 
 
     
 # # train net with dataset
-net = create_network(2, 2, 10, 2)
+net = create_network(2, 3, 10, 2)
 
 # xy, c = create_data2(1000, 2)
 xy, c = create_circles_data(1000, 0.1, 0.1)
@@ -412,7 +399,7 @@ xy_shuffle, c_hot_shuffle = unison_shuffle_array(xy, c_hot)
 batch_size = 20
 
 for i in range(100):
-  net = batch_train(net, xy_shuffle, c_hot_shuffle, batch_size, 0.001)
+  net = batch_train(net, xy_shuffle, c_hot_shuffle, batch_size, 0.01)
   # check and print current error
   outputs = feed_forward(net, xy[0])
   print(mse(outputs, c_hot[0]))
