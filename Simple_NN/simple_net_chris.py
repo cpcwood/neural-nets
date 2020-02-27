@@ -14,7 +14,7 @@ def create_network(n_inputs, n_hidden_layers, n_hidden_nodes, n_outputs):
   network = []
   hidden_layer1 = generate_layer(n_hidden_nodes, n_inputs)
   network.append(hidden_layer1)
-  for layer_n in range(n_hidden_layers-1): # Create each layer
+  for layer_n in range(n_hidden_layers-1):
     hidden_layer = generate_layer(n_hidden_nodes, n_inputs)
     network.append(hidden_layer)
   output_layer = generate_layer(n_outputs, n_hidden_nodes)
@@ -25,8 +25,8 @@ def create_network(n_inputs, n_hidden_layers, n_hidden_nodes, n_outputs):
 
 np.random.seed(0)
 net = create_network(3, 2, 2, 2)  
-for layer in net:
-  print(layer)
+# for layer in net:
+#   print(layer)
   
 # ======================================================
 # Create hidden layer transfer function
