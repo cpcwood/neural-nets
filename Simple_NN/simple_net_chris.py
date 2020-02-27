@@ -6,20 +6,33 @@ from random import random
 
 # ======================================================
 # Create network with randomised weights - each node hash with array of weights
-
-def generate_layer(n_nodes, n_weights):
-  return [(np.random.randn(n_nodes, n_weights)*np.sqrt(2.0/(n_weights+n_nodes))), (np.random.randn(n_nodes)*np.sqrt(2.0/(n_weights+n_nodes)))]
-
+# ======================================================
+# Create network with randomised weights - each node hash with array of weights
 def create_network(n_inputs, n_hidden_layers, n_hidden_nodes, n_outputs): 
   network = []
-  hidden_layer1 = generate_layer(n_hidden_nodes, n_inputs)
+  hidden_layer1 = [np.random.random((n_hidden_nodes, n_inputs)), np.random.rand(n_hidden_nodes)]
   network.append(hidden_layer1)
-  for layer_n in range(n_hidden_layers-1):
-    hidden_layer = generate_layer(n_hidden_nodes, n_inputs)
+  for layer_n in range(n_hidden_layers-1): # Create each layer
+    hidden_layer = [np.random.random((n_hidden_nodes, n_hidden_nodes)), np.random.rand(n_hidden_nodes)]
     network.append(hidden_layer)
-  output_layer = generate_layer(n_outputs, n_hidden_nodes)
+  output_layer = [np.random.random((n_outputs, n_hidden_nodes)), np.random.rand(n_outputs)]
   network.append(output_layer)
   return network
+
+
+# def generate_layer(n_nodes, n_weights):
+#   return [(np.random.randn(n_nodes, n_weights)*np.sqrt(2.0/(n_weights+n_nodes))), (np.random.randn(n_nodes)*np.sqrt(2.0/(n_weights+n_nodes)))]
+
+# def create_network(n_inputs, n_hidden_layers, n_hidden_nodes, n_outputs): 
+#   network = []
+#   hidden_layer1 = generate_layer(n_hidden_nodes, n_inputs)
+#   network.append(hidden_layer1)
+#   for layer_n in range(n_hidden_layers-1):
+#     hidden_layer = generate_layer(n_hidden_nodes, n_inputs)
+#     network.append(hidden_layer)
+#   output_layer = generate_layer(n_outputs, n_hidden_nodes)
+#   network.append(output_layer)
+#   return network
 
 # Test network generation
 
@@ -377,7 +390,7 @@ def classify_net(net):
     outputs.append(feed_forward(net, xy))
   c_data = np.argmax(np.array(outputs), axis=1)
   Z = np.split(c_data, 50)
-  print(Z)
+  # print(Z)
   plt.ion()
   plt.imshow(Z, cmap=plt.cm.RdBu, extent=(0, 1, 0, 1), interpolation='bilinear')
   plt.title('net')
@@ -389,21 +402,21 @@ def classify_net(net):
 
     
 # # train net with dataset
-# net = create_network(2, 2, 10, 2)
+net = create_network(2, 2, 10, 2)
 
-# # xy, c = create_data2(1000, 2)
-# xy, c = create_circles_data(1000, 0.2, 0.1)
-# c_hot = class_to_hot(c)
-# xy_shuffle, c_hot_shuffle = unison_shuffle_array(xy, c_hot)
+# xy, c = create_data2(1000, 2)
+xy, c = create_circles_data(1000, 0.1, 0.1)
+c_hot = class_to_hot(c)
+xy_shuffle, c_hot_shuffle = unison_shuffle_array(xy, c_hot)
 
-# batch_size = 10
+batch_size = 20
 
-# for i in range(20):
-#   net = batch_train(net, xy_shuffle, c_hot_shuffle, batch_size, 0.2)
-#   # check and print current error
-#   outputs = feed_forward(net, xy[0])
-#   print(mse(outputs, c_hot[0]))
-#   outputs = feed_forward(net, xy[-1])
-#   print(mse(outputs, c_hot[-1]))
-#   classify_net(net)
+for i in range(100):
+  net = batch_train(net, xy_shuffle, c_hot_shuffle, batch_size, 0.001)
+  # check and print current error
+  outputs = feed_forward(net, xy[0])
+  print(mse(outputs, c_hot[0]))
+  outputs = feed_forward(net, xy[-1])
+  print(mse(outputs, c_hot[-1]))
+  classify_net(net)
 
