@@ -6,20 +6,27 @@ from random import random
 
 # ======================================================
 # Create network with randomised weights - each node hash with array of weights
+
+def generate_layer(n_nodes, n_weights):
+  return [(np.random.randn(n_nodes, n_weights)*np.sqrt(2.0/(n_weights+n_nodes))), (np.random.randn(n_nodes)*np.sqrt(2.0/(n_weights+n_nodes)))]
+
 def create_network(n_inputs, n_hidden_layers, n_hidden_nodes, n_outputs): 
   network = []
-  hidden_layer1 = [np.random.random((n_hidden_nodes, n_inputs)), np.random.rand(n_hidden_nodes)]
+  hidden_layer1 = generate_layer(n_hidden_nodes, n_inputs)
   network.append(hidden_layer1)
   for layer_n in range(n_hidden_layers-1): # Create each layer
-    hidden_layer = [np.random.random((n_hidden_nodes, n_hidden_nodes)), np.random.rand(n_hidden_nodes)]
+    hidden_layer = generate_layer(n_hidden_nodes, n_inputs)
     network.append(hidden_layer)
-  output_layer = [np.random.random((n_outputs, n_hidden_nodes)), np.random.rand(n_outputs)]
+  output_layer = generate_layer(n_outputs, n_hidden_nodes)
   network.append(output_layer)
   return network
 
 # Test network generation
-seed(1)
-# print create_network(3, 2, 4, 2)  
+
+np.random.seed(0)
+net = create_network(3, 2, 2, 2)  
+for layer in net:
+  print(layer)
   
 # ======================================================
 # Create hidden layer transfer function
@@ -196,7 +203,7 @@ def backpropagation_output_layer(a_all, expected_output, layer_weights):
 # Create da/dz for relu
 def reLU_da_dz(a_nodes):
   a_nodes[a_nodes > 0] = 1
-  a_nodes[a_nodes < 0] = 0
+  a_nodes[a_nodes <= 0] = 0
   return a_nodes
 
 # # Test reLU_da_dz
@@ -232,11 +239,11 @@ def backpropagation(net, a_all, expected_output):
 
 
 # # Test backpropagation
-# net = create_network(2, 2, 4, 3)
+# net = create_network(2, 1, 1, 2)
 # print('net')
 # print(net)
 # inputs = np.array([0.4, 2.])
-# expected_output = np.array([1., 0., 0.])
+# expected_output = np.array([1.])
 # a_all = forward_propagate(net, inputs)
 
 # print('outputs')
@@ -266,10 +273,15 @@ def mse(outputs, expected_outputs):
 
 # print(mse(outputs, expected_outputs))
     
+# =======================================================
+# Create 2 point dataset plotter
 
+def plot_train(X,y):
+  plt.scatter(X[:,0],X[:,1], c = y)
+  plt.show()
 
 # =======================================================
-# Create dataset to train net on
+# Create hard dataset to train net on
 # Creates x points per class
 
 import matplotlib.pyplot as plt
@@ -285,9 +297,6 @@ def create_data2(points, classes):
     Y[ix] = class_number
   return X, Y
 
-def plot_train(X,y):
-  plt.scatter(X[:,0],X[:,1], c = y)
-  plt.show()
 
 # convert c into hot-array
 def class_to_hot(c):
@@ -300,17 +309,26 @@ def unison_shuffle_array(a, b):
   p = np.random.permutation(len(a))
   return a[p], b[p]
 
+
+# =======================================================
+# Create easy dataset to train net on
+# Creates x points per class
+from sklearn.datasets import make_circles
+# Function that generates nonlinear data
+
+def create_circles_data(samples, factor, noise):
+  X, y = make_circles(n_samples=samples, factor=factor, noise=noise)
+  return X, y
+
+# xy, c = create_circles_data(1000, 0.2, 0.01)
 # plot_train(xy, c)
+
 # =======================================================
 # Create batch train
 
 def batch_train(net, xy, c_hot, batch_size, learning_rate):
   assert len(c) % batch_size == 0
   loc = 0
-  
-  outputs = feed_forward(net, xy[loc])
-  print(loc)
-  print(mse(outputs, c_hot[loc]))
 
   for i in range(len(c)/batch_size):
     backprop_matrix = []
@@ -335,49 +353,57 @@ def batch_train(net, xy, c_hot, batch_size, learning_rate):
     for j in range(len(net)):
       for n in range(len(net[j])):
         net[j][n] += (backprop_matrix[j][n] * learning_rate)
-    
-    # check and print current error
-    outputs = feed_forward(net, xy[loc-1])
-    print(loc)
-    print(mse(outputs, c_hot[loc-1]))
+
+    outputs = feed_forward(net, xy[i-1])
+    print(mse(outputs, c_hot[i-1]))
     
   return net
 
-# train net with dataset
-net = create_network(2, 15, 5, 2)
-
-xy, c = create_data2(5000, 2)
-print(len(xy))
-c_hot = class_to_hot(c)
-xy_shuffle, c_hot_shuffle = unison_shuffle_array(xy, c_hot)
-
-batch_size = 100
-
-batch_train(net, xy_shuffle, c_hot_shuffle, batch_size, 0.1)
 
 
+# create classification dataset
+xs = np.linspace(-1,1,50)
+ys = np.linspace(-1,1,50)
+data_set = []
+for x in xs:
+  x
+  for y in ys:
+    data_set.append([x, y])
+classify_net_data = np.array(data_set)
 
-# def step_net(net, cost_matrix, learning_rate):
-#   for j in range(len(net)):
-#       for n in range(len(net[j])):
-#         net[j][n] += (cost_matrix[j][n] * learning_rate)
-#   return net
+def classify_net(net):
+  outputs = []
+  for xy in classify_net_data:
+    outputs.append(feed_forward(net, xy))
+  c_data = np.argmax(np.array(outputs), axis=1)
+  Z = np.split(c_data, 50)
+  print(Z)
+  plt.ion()
+  plt.imshow(Z, cmap=plt.cm.RdBu, extent=(0, 1, 0, 1), interpolation='bilinear')
+  plt.title('net')
+  plt.show()
+  plt.pause(0.001)
 
-# net = create_network(2, 2, 2, 3)
-# bnet = create_network(2, 2, 2, 3)
-# print(net)
-# print(bnet)
-# print(step_net(net, bnet, 0.1))
 
 
 
-# a = np.array([1,2,3,4])
-# b = np.array([1,2,3])
-# e = np.array([1,2,3,4])
-# f = np.array([1,2,3])
-# c = [[a, b],[e, f]]
-# for item in c:
-#   for i in range(len(item)):
-#     item[i] += 1
+    
+# # train net with dataset
+# net = create_network(2, 2, 10, 2)
 
-# print(c)
+# # xy, c = create_data2(1000, 2)
+# xy, c = create_circles_data(1000, 0.2, 0.1)
+# c_hot = class_to_hot(c)
+# xy_shuffle, c_hot_shuffle = unison_shuffle_array(xy, c_hot)
+
+# batch_size = 10
+
+# for i in range(20):
+#   net = batch_train(net, xy_shuffle, c_hot_shuffle, batch_size, 0.2)
+#   # check and print current error
+#   outputs = feed_forward(net, xy[0])
+#   print(mse(outputs, c_hot[0]))
+#   outputs = feed_forward(net, xy[-1])
+#   print(mse(outputs, c_hot[-1]))
+#   classify_net(net)
+
