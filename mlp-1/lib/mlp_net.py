@@ -1,7 +1,7 @@
 import numpy as np
 from random import seed
 from random import random
-np.random.seed(1)
+np.random.seed(0)
 
 # Inputs => layer_transfer => layer_activation => layer_transfer(output) => output_function
 
