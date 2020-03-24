@@ -52,10 +52,36 @@ In progress:
 - Make batch training printout dynamic to class size
 - Make batch training printout run seperatley to training as to not slow down training
 - Optimise Math operations
+- Make runner file to input configuration, instead of running the net directly 
 
 #### Examples
 
-2D data simple dataset with 2 classes 
+##### 2D data simple dataset with 2 classes
+Data:
+- 2 classes
+- 1000 points
+Network:
+- 2 hidden layers (exc output layer)
+- 5 node per layer
+Input modification:
+- none
+Training:
+- batch size: 10
+- step size: 0.01
+
 (add images here)
-2D data complex data set with 2 classes
+
+##### 2D data complex data set with 2 classes
+Data:
+- classes: 2
+- points: 2000
+Network:
+- x hidden layers (exc output layer)
+- x node per layer
+Input modification:
+- x
+Training:
+- batch size: x
+- step size: x
+
 (add images here)

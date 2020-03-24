@@ -23,6 +23,19 @@ Dynamical generation of multilayered perceptron writting in python with numpi. F
 - sklearn for generating datasets
 - Mamba & Expects for testing (TBC)
 
+#### How to Install
+Ensure the following is installed on your system:
+- python 3.7.6
+- anaconda 2020.02
+Then install sklearn from the command line using
+```
+pip install -U scikit-learn
+```
+Finally clone or download the repository and run the mlp file directly by running the following command from the root of the repository:
+```
+python ./mlp-1/lib/mlp_net.py
+```
+
 #### Progress
 
 Complete:
@@ -39,6 +52,7 @@ In progress:
 - Make batch training printout dynamic to class size
 - Make batch training printout run seperatley to training as to not slow down training
 - Optimise Math operations
+- Make runner file, instead of running the net directly
 
 #### Examples
 

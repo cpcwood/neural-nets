@@ -1,6 +1,8 @@
 import numpy as np
 from random import seed
 from random import random
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_circles
 np.random.seed(0)
 
 # Inputs => layer_transfer => layer_activation => layer_transfer(output) => output_function
@@ -282,9 +284,6 @@ def plot_train(X,y):
 
 # =======================================================
 # Create hard dataset to train net on
-# Creates x points per class
-
-import matplotlib.pyplot as plt
 
 def create_data2(points, classes):
   X = np.zeros((points*classes,2))
@@ -297,6 +296,26 @@ def create_data2(points, classes):
     Y[ix] = class_number
   return X, Y
 
+# Test generation and print
+# xy, c = create_data2(1000, 2)
+# plot_train(xy, c)
+
+
+
+# =======================================================
+# Create easy dataset to train net on
+
+# Function that generates nonlinear data
+def create_circles_data(samples, factor, noise):
+  X, y = make_circles(n_samples=samples, factor=factor, noise=noise)
+  return X, y
+
+# Test generation and print
+# xy, c = create_circles_data(1000, 0.2, 0.1)
+# plot_train(xy, c)
+
+# =======================================================
+# Create methods to shuffle and make classification data hot for training
 
 # convert c into hot-array
 def class_to_hot(c):
@@ -309,19 +328,6 @@ def unison_shuffle_array(a, b):
   p = np.random.permutation(len(a))
   return a[p], b[p]
 
-
-# =======================================================
-# Create easy dataset to train net on
-# Creates x points per class
-from sklearn.datasets import make_circles
-# Function that generates nonlinear data
-
-def create_circles_data(samples, factor, noise):
-  X, y = make_circles(n_samples=samples, factor=factor, noise=noise)
-  return X, y
-
-# xy, c = create_circles_data(1000, 0.2, 0.01)
-# plot_train(xy, c)
 
 # =======================================================
 # Create batch train
@@ -355,7 +361,7 @@ def batch_train(net, xy, c_hot, batch_size, learning_rate):
         net[j][n] += (backprop_matrix[j][n] * learning_rate)
 
     outputs = feed_forward(net, xy[i-1])
-    print(mse(outputs, c_hot[i-1]))
+    # print(mse(outputs, c_hot[i-1]))
     
   return net
 
@@ -388,22 +394,32 @@ def classify_net(net):
 
 
     
-# # train net with dataset
-net = create_network(2, 3, 10, 2)
+# Train net with dataset
+# ============================
+# create_network(n_inputs, n_hidden_layers, n_hidden_nodes, n_outputs): 
 
+# Simple 2D dataset test
+net = create_network(2, 2, 5, 2)
+xy, c = create_circles_data(1000, 0.2, 0.1)
+batch_size = 10
+step_size = 0.01
+
+# Complex 2D dataset test
+# net = create_network(2, 8, 8, 2)
 # xy, c = create_data2(1000, 2)
-xy, c = create_circles_data(1000, 0.1, 0.1)
+# batch_size = 10
+# step_size = 0.001
+
+
+# Run training and print output
 c_hot = class_to_hot(c)
 xy_shuffle, c_hot_shuffle = unison_shuffle_array(xy, c_hot)
 
-batch_size = 20
-
 for i in range(100):
-  net = batch_train(net, xy_shuffle, c_hot_shuffle, batch_size, 0.01)
+  net = batch_train(net, xy_shuffle, c_hot_shuffle, batch_size, step_size)
   # check and print current error
   outputs = feed_forward(net, xy[0])
-  print(mse(outputs, c_hot[0]))
+  # print(mse(outputs, c_hot[0]))
   outputs = feed_forward(net, xy[-1])
-  print(mse(outputs, c_hot[-1]))
+  # print(mse(outputs, c_hot[-1]))
   classify_net(net)
-
