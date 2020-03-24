@@ -61,11 +61,14 @@ In progress:
 Data:
 - 2 classes
 - 1000 points
+
 Network:
 - 2 hidden layers (exc output layer)
 - 5 node per layer
+
 Input modification:
 - none
+
 Training:
 - batch size: 10
 - step size: 0.01
@@ -79,14 +82,17 @@ Training:
 Data:
 - classes: 2
 - points: 2000
+
 Network:
 - 4 hidden layers (exc output layer)
 - 12 node per layer
+
 Input modification:
 - x
 - y
 - x^2
 - y^2
+
 Training:
 - batch size: 10
 - step size: 0.001
