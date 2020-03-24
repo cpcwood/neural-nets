@@ -1,29 +1,30 @@
 # Neural Networks
 
-### Overview
+## Overview
 
 My repository for creating and optimising neural networks. 
 
+------
 
-### MLP-1
+## MLP-1
 
-#### About
+### About
 Dynamical generation of multilayered perceptron writting in python with numpi. First network I've created so was really just a test of whether I could apply the concepts, not very optimised yet.
 
-#### Design
+### Design
 - Dynamic network generator
 - General forward and backwards propagation based on matrix multiplication
 - RELU hidden node activaton
 - Softmax output layer activation
 
-#### Technology
+### Technology
 
 - python 3.7
 - numpi for Maths
 - sklearn for generating datasets
 - Mamba & Expects for testing (TBC)
 
-#### How to Install
+### How to Install
 Ensure the following is installed on your system:
 - python 3.7.6
 - anaconda 2020.02
@@ -36,7 +37,7 @@ Finally clone or download the repository and run the mlp file directly by runnin
 python ./mlp-1/lib/mlp_net.py
 ```
 
-#### Progress
+### Progress
 
 Complete:
 - Create network of dynamic size
@@ -54,9 +55,9 @@ In progress:
 - Optimise Math operations
 - Make runner file to input configuration, instead of running the net directly 
 
-#### Examples
+### Examples
 
-##### 2D data simple dataset with 2 classes
+#### 2D data simple dataset with 2 classes
 Data:
 - 2 classes
 - 1000 points
@@ -70,11 +71,9 @@ Training:
 - step size: 0.01
 
 ![Dataset](mlp-1/docs/simple-dataset-2d.png)
-![Dataset](mlp-1/docs/simple-dataset-train-1.png)
-![Dataset](mlp-1/docs/simple-dataset-train-2.png)
-![Dataset](mlp-1/docs/simple-dataset-train-3.png)
+![Dataset](mlp-1/docs/simple-dataset-train-1.png) ![Dataset](mlp-1/docs/simple-dataset-train-2.png) ![Dataset](mlp-1/docs/simple-dataset-train-3.png)
 
-##### 2D data complex data set with 2 classes
+#### 2D data complex data set with 2 classes
 Data:
 - classes: 2
 - points: 2000
