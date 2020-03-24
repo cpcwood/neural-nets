@@ -70,10 +70,10 @@ Training:
 - batch size: 10
 - step size: 0.01
 
-<p align="center">
-  <img src="mlp-1/docs/simple-dataset-2d.png" width="400" height="300"/>
+<div align="center">
+  <img src="mlp-1/docs/simple-dataset-2d.png" width="400" height="300"/><br>
   <img src="mlp-1/docs/simple-dataset-train-1.png" width="210" height="210"/> <img src="mlp-1/docs/simple-dataset-train-2.png" width="210" height="210"/> <img src="mlp-1/docs/simple-dataset-train-3.png" width="210" height="210"/>
-</p>
+</div>
 
 #### 2D data complex data set with 2 classes
 Data:
@@ -91,7 +91,7 @@ Training:
 - batch size: 10
 - step size: 0.001
   
-<p align="center">
-  <img src="mlp-1/docs/complex-dataset-2d.png" width="400" height="300"/>
+<div align="center">
+  <img src="mlp-1/docs/complex-dataset-2d.png" width="400" height="300"/><br>
   <img src="mlp-1/docs/complex-dataset-train-1.png" width="210" height="210"/> <img src="mlp-1/docs/complex-dataset-train-2.png" width="210" height="210"/> <img src="mlp-1/docs/complex-dataset-train-3.png" width="210" height="210"/>
-</p>
+</div>
