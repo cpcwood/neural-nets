@@ -9,7 +9,7 @@ My repository for creating and optimising neural networks.
 ## MLP-1
 
 ### About
-Dynamical generation of multilayered perceptron writting in python with numpi. First network I've created so was really just a test of whether I could apply the concepts, not very optimised yet.
+Dynamical generation of multilayered perceptron written in python. First network I've created so was really just a test of whether I could apply the concepts to the code, not optimised yet.
 
 ### Design
 - Dynamic network generator
@@ -74,7 +74,9 @@ Training:
 - step size: 0.01
 
 <div align="center">
+  <h3>Dataset</h3><br>
   <img src="mlp-1/docs/simple-dataset-2d.png" width="600" height="450"/><br>
+  <h3>Network training</h3><br>
   <img src="mlp-1/docs/simple-dataset-train-1.png" width="210" height="210"/> <img src="mlp-1/docs/simple-dataset-train-2.png" width="210" height="210"/> <img src="mlp-1/docs/simple-dataset-train-3.png" width="210" height="210"/>
 </div>
 
@@ -98,6 +100,8 @@ Training:
 - step size: 0.001
   
 <div align="center">
+  <h3>Dataset</h3><br>
   <img src="mlp-1/docs/complex-dataset-2d.png" width="600" height="450"/><br>
+  <h3>Network training</h3><br>
   <img src="mlp-1/docs/complex-dataset-train-1.png" width="210" height="210"/> <img src="mlp-1/docs/complex-dataset-train-2.png" width="210" height="210"/> <img src="mlp-1/docs/complex-dataset-train-3.png" width="210" height="210"/>
 </div>
