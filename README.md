@@ -70,9 +70,10 @@ Training:
 - batch size: 10
 - step size: 0.01
 
-![Dataset](mlp-1/docs/simple-dataset-2d.png)
-
-<img src="mlp-1/docs/simple-dataset-train-1.png" width="320" height="240"/> <img src="mlp-1/docs/simple-dataset-train-2.png" width="320" height="240"/> <img src="mlp-1/docs/simple-dataset-train-3.png" width="320" height="240"/>
+<p align="center">
+  <img src="mlp-1/docs/simple-dataset-2d.png" width="400" height="300"/>
+  <img src="mlp-1/docs/simple-dataset-train-1.png" width="210" height="210"/> <img src="mlp-1/docs/simple-dataset-train-2.png" width="210" height="210"/> <img src="mlp-1/docs/simple-dataset-train-3.png" width="210" height="210"/>
+</p>
 
 #### 2D data complex data set with 2 classes
 Data:
@@ -89,7 +90,8 @@ Input modification:
 Training:
 - batch size: 10
 - step size: 0.001
-
-![Dataset](mlp-1/docs/complex-dataset-2d.png)
-
-<img src="mlp-1/docs/complex-dataset-train-1.png" width="320" height="240"/> <img src="mlp-1/docs/complex-dataset-train-2.png" width="320" height="240"/> <img src="mlp-1/docs/complex-dataset-train-3.png" width="320" height="240"/>
+  
+<p align="center">
+  <img src="mlp-1/docs/complex-dataset-2d.png" width="400" height="300"/>
+  <img src="mlp-1/docs/complex-dataset-train-1.png" width="210" height="210"/> <img src="mlp-1/docs/complex-dataset-train-2.png" width="210" height="210"/> <img src="mlp-1/docs/complex-dataset-train-3.png" width="210" height="210"/>
+</p>
