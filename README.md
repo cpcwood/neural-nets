@@ -71,7 +71,7 @@ Training:
 - step size: 0.01
 
 ![Dataset](mlp-1/docs/simple-dataset-2d.png)
-![Dataset](mlp-1/docs/simple-dataset-train-1.png) ![Dataset](mlp-1/docs/simple-dataset-train-2.png) ![Dataset](mlp-1/docs/simple-dataset-train-3.png)
+![Dataset](mlp-1/docs/simple-dataset-train-1.png?display=inline-block) ![Dataset](mlp-1/docs/simple-dataset-train-2.pngdisplay=inline-block) ![Dataset](mlp-1/docs/simple-dataset-train-3.pngdisplay=inline-block)
 
 #### 2D data complex data set with 2 classes
 Data:
