@@ -359,27 +359,29 @@ def batch_train(net, xy, c_hot, batch_size, learning_rate):
     for j in range(len(net)):
       for n in range(len(net[j])):
         net[j][n] += (backprop_matrix[j][n] * learning_rate)
-
-    outputs = feed_forward(net, xy[i-1])
-    # print(mse(outputs, c_hot[i-1]))
     
   return net
 
 
+# =======================================================
+# Create classification dataset
 
-# create classification dataset
-xs = np.linspace(-1,1,50)
-ys = np.linspace(-1,1,50)
-data_set = []
-for x in xs:
-  x
-  for y in ys:
-    data_set.append([x, y])
-classify_net_data = np.array(data_set)
+def classification_dataset_2d():
+  xs = np.linspace(-1,1,50)
+  ys = np.linspace(-1,1,50)
+  data_set = []
+  for x in xs:
+    for y in ys:
+      data_set.append([x, y])
+  return np.array(data_set)
 
-def classify_net(net):
+
+# =======================================================
+# Create net classification visuliser
+
+def classify_net(net, classification_data):
   outputs = []
-  for xy in classify_net_data:
+  for xy in classification_data:
     outputs.append(feed_forward(net, xy))
   c_data = np.argmax(np.array(outputs), axis=1)
   Z = np.split(c_data, 50)
@@ -391,11 +393,24 @@ def classify_net(net):
   plt.pause(0.0001)
 
 
+# =======================================================
+# Create input data modification
+def square_input_data(xy):
+  result = map(lambda item: [item[0], item[1], item[0]**2, item[1]**2], xy)
+  return np.array(result)
+
+# # test square_input_data
+# xy = [[1, 2], [3, 4]]
+# print('test square_input_data')
+# print('expected')
+# print(np.array([[1,2,1,4], [3,4,9,16]]))
+# print('result') 
+# print(square_input_data(xy))
 
 
-    
+# =======================================================
 # Train net with dataset
-# ============================
+
 # create_network(n_inputs, n_hidden_layers, n_hidden_nodes, n_outputs): 
 
 # Simple 2D dataset test
@@ -403,23 +418,29 @@ net = create_network(2, 2, 5, 2)
 xy, c = create_circles_data(1000, 0.2, 0.1)
 batch_size = 10
 step_size = 0.01
+classification_data = classification_dataset_2d()
 
-# Complex 2D dataset test
-# net = create_network(2, 8, 8, 2)
-# xy, c = create_data2(1000, 2)
+# Complex 2D dataset test - square inputs
+# net = create_network(4, 4, 12, 2)
+# xy, c = create_data2(2000, 2)
+# xy = square_input_data(xy)
 # batch_size = 10
 # step_size = 0.001
+# classification_data = square_input_data(classification_dataset_2d())
 
 
 # Run training and print output
 c_hot = class_to_hot(c)
 xy_shuffle, c_hot_shuffle = unison_shuffle_array(xy, c_hot)
 
-for i in range(100):
+for i in range(10000):
   net = batch_train(net, xy_shuffle, c_hot_shuffle, batch_size, step_size)
+
   # check and print current error
   outputs = feed_forward(net, xy[0])
-  # print(mse(outputs, c_hot[0]))
+  print(mse(outputs, c_hot[0]))
   outputs = feed_forward(net, xy[-1])
-  # print(mse(outputs, c_hot[-1]))
-  classify_net(net)
+  print(mse(outputs, c_hot[-1]))
+
+  # classify and print
+  classify_net(net, classification_data)

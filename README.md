@@ -69,19 +69,28 @@ Training:
 - batch size: 10
 - step size: 0.01
 
-(add images here)
+![Dataset](mlp-1/docs/simple-dataset-2d.png)
+![Dataset](mlp-1/docs/simple-dataset-train-1.png)
+![Dataset](mlp-1/docs/simple-dataset-train-2.png)
+![Dataset](mlp-1/docs/simple-dataset-train-3.png)
 
 ##### 2D data complex data set with 2 classes
 Data:
 - classes: 2
 - points: 2000
 Network:
-- x hidden layers (exc output layer)
-- x node per layer
+- 4 hidden layers (exc output layer)
+- 12 node per layer
 Input modification:
 - x
+- y
+- x^2
+- y^2
 Training:
-- batch size: x
-- step size: x
+- batch size: 10
+- step size: 0.001
 
-(add images here)
+![Dataset](mlp-1/docs/complex-dataset-2d.png)
+![Dataset](mlp-1/docs/complex-dataset-train-1.png)
+![Dataset](mlp-1/docs/complex-dataset-train-2.png)
+![Dataset](mlp-1/docs/complex-dataset-train-3.png)
