@@ -433,7 +433,7 @@ classification_data = classification_dataset_2d()
 c_hot = class_to_hot(c)
 xy_shuffle, c_hot_shuffle = unison_shuffle_array(xy, c_hot)
 
-for i in range(10000):
+for i in range(1000):
   net = batch_train(net, xy_shuffle, c_hot_shuffle, batch_size, step_size)
 
   # check and print current error
