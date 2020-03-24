@@ -74,9 +74,9 @@ Training:
 - step size: 0.01
 
 <div align="center">
-  <h3>Dataset</h3><br>
+  <h3>Dataset</h3>
   <img src="mlp-1/docs/simple-dataset-2d.png" width="600" height="450"/><br>
-  <h3>Network training</h3><br>
+  <h3>Network training</h3>
   <img src="mlp-1/docs/simple-dataset-train-1.png" width="210" height="210"/> <img src="mlp-1/docs/simple-dataset-train-2.png" width="210" height="210"/> <img src="mlp-1/docs/simple-dataset-train-3.png" width="210" height="210"/>
 </div>
 
@@ -100,8 +100,8 @@ Training:
 - step size: 0.001
   
 <div align="center">
-  <h3>Dataset</h3><br>
+  <h3>Dataset</h3>
   <img src="mlp-1/docs/complex-dataset-2d.png" width="600" height="450"/><br>
-  <h3>Network training</h3><br>
+  <h3>Network training</h3>
   <img src="mlp-1/docs/complex-dataset-train-1.png" width="210" height="210"/> <img src="mlp-1/docs/complex-dataset-train-2.png" width="210" height="210"/> <img src="mlp-1/docs/complex-dataset-train-3.png" width="210" height="210"/>
 </div>
